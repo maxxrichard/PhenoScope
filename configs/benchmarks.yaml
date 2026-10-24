@@ -1,0 +1,33 @@
+# Curated benchmark datasets. Each image is an OME-Zarr store at <uri>/<id>.zarr
+# with instance ground truth under labels/<label_name>. The frozen reference
+# distribution for drift monitoring lives at <uri>/qc_reference.parquet.
+benchmarks:
+  hcs-cellpainting:
+    modality: fluorescence
+    description: Cell Painting high-content screen fields, nuclei + cell instance masks.
+    uri: s3://phenoscope-benchmarks/hcs-cellpainting
+    label_name: cells
+    channels: [DNA, ER, RNA, AGP, Mito]
+    images: []
+    split:
+      train: []
+      val: []
+      test: []
+
+  brightfield-cells:
+    modality: brightfield
+    description: Label-free brightfield cell instances across three cell lines.
+    uri: s3://phenoscope-benchmarks/brightfield-cells
+    label_name: cells
+    channels: [BF]
+    images: []
+    split: {}
+
+  he-nuclei:
+    modality: he
+    description: H&E whole-slide tiles (40x) with nucleus instance masks.
+    uri: s3://phenoscope-benchmarks/he-nuclei
+    label_name: nuclei
+    channels: [R, G, B]
+    images: []
+    split: {}

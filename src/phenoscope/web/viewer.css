@@ -1,0 +1,45 @@
+:root {
+  --bg: #f7f7f5;
+  --panel: #ffffff;
+  --ink: #1d1f23;
+  --muted: #6b7078;
+  --line: #e2e3e0;
+  --accent: #0f766e;
+  --canvas: #0b0d10;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111316;
+    --panel: #181b1f;
+    --ink: #e8e9ea;
+    --muted: #9298a0;
+    --line: #2a2e33;
+    --accent: #2dd4bf;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 14px/1.45 system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); }
+header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); background: var(--panel); }
+h1 { font-size: 17px; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 16px 0 6px; }
+.pill { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.pill.ok { color: var(--accent); border-color: var(--accent); }
+main { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 50px); }
+aside { border-right: 1px solid var(--line); padding: 4px 16px; background: var(--panel); overflow: auto; }
+ul { list-style: none; padding: 0; margin: 0; }
+li { padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+li:hover { background: var(--bg); }
+li.active { background: var(--accent); color: #fff; }
+#viewer { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+input, select, button { font: inherit; padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); }
+button { background: var(--accent); color: #fff; border-color: var(--accent); cursor: pointer; }
+.canvas { background: var(--canvas); border-radius: 8px; min-height: 320px; display: grid; place-items: center; overflow: auto; }
+.canvas img { width: 100%; max-width: 900px; height: auto; image-rendering: pixelated; }
+.muted { color: var(--muted); margin: 0; }
+table { border-collapse: collapse; width: 100%; max-width: 640px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+@media (max-width: 720px) {
+  main { grid-template-columns: 1fr; }
+  aside { border-right: 0; border-bottom: 1px solid var(--line); }
+}

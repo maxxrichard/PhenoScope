@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+  - ingress.yaml
+patches:
+  # IRSA: bind service accounts to IAM roles with scoped S3 access.
+  - target: { kind: ServiceAccount, name: phenoscope-api }
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/phenoscope-api
+  - target: { kind: ServiceAccount, name: phenoscope-worker }
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/phenoscope-worker
+images:
+  - name: ghcr.io/maxxrichard/phenoscope
+    newTag: "0.4.0"
+  - name: ghcr.io/maxxrichard/phenoscope-gpu
+    newTag: "0.4.0"

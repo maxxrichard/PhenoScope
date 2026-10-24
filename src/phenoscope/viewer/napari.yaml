@@ -1,0 +1,20 @@
+name: phenoscope
+display_name: PhenoScope
+contributions:
+  commands:
+    - id: phenoscope.segment_widget
+      python_name: phenoscope.viewer.widgets:segment_widget
+      title: Segment cells
+    - id: phenoscope.features_widget
+      python_name: phenoscope.viewer.widgets:features_widget
+      title: Measure features
+    - id: phenoscope.server_widget
+      python_name: phenoscope.viewer.widgets:ServerBrowser
+      title: Browse PhenoScope server
+  widgets:
+    - command: phenoscope.segment_widget
+      display_name: Segment cells
+    - command: phenoscope.features_widget
+      display_name: Measure features
+    - command: phenoscope.server_widget
+      display_name: PhenoScope server

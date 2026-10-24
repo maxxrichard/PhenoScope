@@ -1,0 +1,41 @@
+# Template for a one-off GPU worker Job (the API builds equivalent manifests
+# programmatically in phenoscope.jobs.backends.KubernetesBackend).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: phenoscope-worker-template
+  labels:
+    app.kubernetes.io/part-of: phenoscope
+spec:
+  suspend: true          # template only; never runs as-is
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: phenoscope-worker
+      nodeSelector:
+        phenoscope/pool: gpu
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+      initContainers:
+        - name: fetch-models
+          image: amazon/aws-cli:2.17.0
+          args: ["s3", "sync", "s3://phenoscope-models/current/", "/models/"]
+          volumeMounts: [{ name: models, mountPath: /models }]
+      containers:
+        - name: worker
+          image: ghcr.io/maxxrichard/phenoscope-gpu:latest
+          args: ["run-task", "segment", "{}"]
+          envFrom:
+            - configMapRef: { name: phenoscope-config }
+            - secretRef: { name: phenoscope-env }
+          resources:
+            requests: { cpu: "4", memory: 16Gi }
+            limits: { memory: 32Gi, nvidia.com/gpu: "1" }
+          volumeMounts: [{ name: models, mountPath: /models }]
+      volumes:
+        - name: models
+          emptyDir: { sizeLimit: 20Gi }

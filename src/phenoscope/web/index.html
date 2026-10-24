@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PhenoScope Viewer</title>
+  <link rel="stylesheet" href="/static/viewer.css" />
+</head>
+<body>
+  <header>
+    <h1>PhenoScope</h1>
+    <span id="health" class="pill">checking…</span>
+  </header>
+  <main>
+    <aside>
+      <h2>Datasets</h2>
+      <ul id="datasets"></ul>
+      <h2>Images</h2>
+      <ul id="images"></ul>
+    </aside>
+    <section id="viewer">
+      <div class="toolbar">
+        <label>Channels <input id="channels" placeholder="DAPI,Actin,Tubulin" /></label>
+        <label>Segmenter <select id="segmenter"></select></label>
+        <label><input type="checkbox" id="outlines" checked /> outlines</label>
+        <button id="run">Segment</button>
+      </div>
+      <div class="canvas" id="canvas"><p class="muted">No image selected</p></div>
+      <p id="status" class="muted">Select an image.</p>
+      <table id="runs"><thead><tr><th>Run</th><th>Model</th><th>Objects</th><th>Runtime</th></tr></thead><tbody></tbody></table>
+    </section>
+  </main>
+  <script src="/static/viewer.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+# Local stack: API + PostgreSQL + MongoDB + MinIO (S3-compatible object store).
+services:
+  api:
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+    ports: ["8000:8000"]
+    environment:
+      PHENOSCOPE_DATABASE_URL: postgresql+psycopg://phenoscope:phenoscope@postgres:5432/phenoscope
+      PHENOSCOPE_MONGO_URL: mongodb://mongo:27017
+      PHENOSCOPE_DATA_ROOT: s3://phenoscope-zarr
+      PHENOSCOPE_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      postgres: { condition: service_healthy }
+      mongo: { condition: service_started }
+      minio: { condition: service_started }
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: phenoscope
+      POSTGRES_PASSWORD: phenoscope
+      POSTGRES_DB: phenoscope
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U phenoscope"]
+      interval: 5s
+      retries: 10
+
+  mongo:
+    image: mongo:7
+    volumes: [mongodata:/data/db]
+
+  minio:
+    image: minio/minio:RELEASE.2024-10-13T13-34-11Z
+    command: server /data --console-address ":9001"
+    ports: ["9000:9000", "9001:9001"]
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes: [miniodata:/data]
+
+  createbuckets:
+    image: minio/mc:RELEASE.2024-10-08T09-37-26Z
+    depends_on: [minio]
+    entrypoint: >
+      /bin/sh -c "
+      sleep 3;
+      mc alias set local http://minio:9000 minioadmin minioadmin;
+      mc mb -p local/phenoscope-zarr local/phenoscope-raw local/phenoscope-benchmarks;
+      exit 0;"
+
+volumes:
+  pgdata:
+  mongodata:
+  miniodata:

@@ -1,0 +1,25 @@
+# Segmenter configurations compared by `phenoscope benchmark`.
+# Keys are display names; `backend` selects the registered segmenter.
+segmenters:
+  watershed:
+    backend: watershed
+    sigma: 1.5
+    min_distance: 6
+  cellpose-cyto3:
+    backend: cellpose
+    model_type: cyto3
+    diameter: 30
+  cellpose-nuclei:
+    backend: cellpose
+    model_type: nuclei
+    diameter: 17
+  sam-vit-b-ft:
+    backend: sam
+    model_type: vit_b
+    checkpoint: models/sam_vit_b_01ec64.pth
+    decoder_weights: models/sam_decoder_ft.pt
+    points_per_side: 48
+  unet-3class:
+    backend: unet
+    weights: models/unet_nuclei.pt
+    in_channels: 1

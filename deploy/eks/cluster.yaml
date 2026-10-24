@@ -1,0 +1,30 @@
+# eksctl cluster definition: CPU pool for API/Airflow, autoscaled GPU pool for workers.
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: phenoscope
+  region: eu-central-1
+  version: "1.30"
+iam:
+  withOIDC: true
+managedNodeGroups:
+  - name: cpu
+    instanceType: m6i.2xlarge
+    minSize: 2
+    maxSize: 6
+    labels: { phenoscope/pool: cpu }
+  - name: gpu
+    instanceType: g5.2xlarge
+    minSize: 0
+    maxSize: 8
+    volumeSize: 200
+    labels: { phenoscope/pool: gpu }
+    taints:
+      - key: nvidia.com/gpu
+        value: "true"
+        effect: NoSchedule
+    tags:
+      k8s.io/cluster-autoscaler/node-template/label/phenoscope/pool: gpu
+addons:
+  - name: aws-ebs-csi-driver
+  - name: vpc-cni

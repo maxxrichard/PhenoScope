@@ -1,0 +1,34 @@
+# The API submits batch Jobs; workers only need S3 access (via IRSA on EKS).
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: phenoscope-api
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: phenoscope-worker
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: phenoscope-job-submitter
+rules:
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "get", "list", "watch", "delete"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: phenoscope-api-jobs
+subjects:
+  - kind: ServiceAccount
+    name: phenoscope-api
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: phenoscope-job-submitter
